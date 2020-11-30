@@ -1,0 +1,181 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <proguardAdditions>
+    <insert>
+      -keep class com.gaa.**{*;} 
+      -keep class com.onestore.**{*;}
+    </insert>
+  </proguardAdditions>
+
+<!--  <buildGradleAdditions>
+    <insert>
+      dependencies {
+    </insert>
+    <insertValue value="implementation fileTree(include: ['*.aar'], dir: '$S(PluginDir)/lib')"/>
+    <insert>
+      }
+    </insert>
+  </buildGradleAdditions> -->
+
+
+  <androidManifestUpdates>
+    <addElements tag="application">
+      <meta-data android:name="iap:api_version" android:value="6" />
+      <meta-data android:value="popup" android:name="iap:view_option"/>
+      
+      <activity android:name="com.gaa.sdk.iap.ProxyActivity"
+            android:configChanges="locale|fontScale|keyboard|keyboardHidden|layoutDirection|mcc|mnc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|touchscreen|uiMode"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+    </addElements> 
+
+  </androidManifestUpdates>
+
+  <gameActivityClassAdditions>
+
+    <insert>
+      private PurchaseClientNative iapClientNative;
+
+      public void AndroidTrunkJava_GAAStartConnection(long futureHandle) {
+      iapClientNative.startConnection(futureHandle);
+      }
+
+      public void AndroidTrunkJava_GAAEndConnection() {
+      iapClientNative.endConnection();
+      }
+
+      public void AndroidTrunkJava_GAALaunchPurchaseFlow(final String productId, final String productType, final String productName, final String developerPayload, final String gameUserId, final boolean promotionApplicable) {
+      iapClientNative.launchPurchaseFlow(this,productId, productType, productName, developerPayload, gameUserId, promotionApplicable);
+      }
+
+      public void AndroidTrunkJava_GAAConsumeAsync(final String jsonPurchaseData, final String developerPayload, long futureHandle) {
+      iapClientNative.consumeAsync(jsonPurchaseData, developerPayload, futureHandle);
+      }
+
+      public void AndroidTrunkJava_GAAAcknowledgeAsync(final String jsonPurchaseData, final String developerPayload, long futureHandle) {
+      iapClientNative.acknowledgeAsync(jsonPurchaseData, developerPayload, futureHandle);
+      }
+
+      public void AndroidTrunkJava_GAAQueryPurchasesAsync(final String productType, final long futureHandle) {
+      iapClientNative.queryPurchasesAsync(productType, futureHandle);
+      }
+
+      public void AndroidTrunkJava_GAAQueryProductDetails(final String[] productIds, final String productType, final long futureHandle) {
+      iapClientNative.queryProductDetails(productIds, productType, futureHandle);
+      }
+
+      public void AndroidTrunkJava_GAAManageRecurringProductAsync(final String jsonPurchaseData, final long futureHandle) {
+      iapClientNative.manageRecurringProductAsync(jsonPurchaseData, futureHandle);
+      }
+
+      public void AndroidTrunkJava_GAAGetStoreInfoAsync(final long futureHandle) {
+      iapClientNative.getStoreInfoAsync(futureHandle);
+      }
+
+      public void AndroidTrunkJava_GAALaunchUpdateOrInstall(final long futureHandle) {
+      iapClientNative.launchUpdateOrInstall(this, futureHandle);
+      }
+
+      public void AndroidTrunkJava_GAALaunchLoginFlowAsync(final long futureHandle) {
+      iapClientNative.launchLoginFlowAsync(this, futureHandle);
+      }
+
+      public boolean AndroidTrunkJava_GAAVerify(String key, String purchaseData, String signature) {
+      return AppSecurity.verifyPurchase(key, purchaseData, signature);
+      }
+    </insert>
+
+    <!-- Test 팝업을 위한 설정이다 실제 다이얼로그를 보여주지 않을 거라면 삭제해도 무방하다-->
+    <insert>
+      public void AndroidTrunkJava_GAAAlertDialog(final String title, final String message) {
+      final Context context = this;
+      runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+      AlertDialog.Builder messagePopup = new AlertDialog.Builder(context);
+      messagePopup.setTitle(title);
+      messagePopup.setMessage(message);
+      messagePopup.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialogInterface, int i) {
+
+      }
+      });
+      messagePopup.setCancelable(false);
+      messagePopup.create().show();
+      }
+      });
+      }
+    </insert>
+
+  </gameActivityClassAdditions>
+
+  <!-- optional additions to GameActivity onCreate metadata reading in GameActivity.java -->
+
+
+
+  <gameActivityReadMetadataAdditions>
+
+
+    <insert>
+
+      <!-- 2번째 인자로 개발자센터에서 발급받은 라이센스키를 넣으면 SDK에서도 구매데이터에 대한 signature 검증을 진행하게 됩니다(option) -->
+
+      iapClientNative = new PurchaseClientNative(this, "");
+    </insert>
+
+  </gameActivityReadMetadataAdditions>
+<!--
+  <AARImports>
+    <insertValue value="repository $S(PluginDir)/onestoreIap.aar"/>
+    <insertNewline/>
+
+    <insert>
+      com.gaa.iap.sdk,iap-release,19.0
+    </insert>
+  </AARImport>
+  -->
+<!--
+  <AARImports>
+    <insertValue value="repository $S(PluginDir)/extras" />
+    <insertNewline/>
+    <insertValue value="com.gaa.iap.sdk,iap-release,19.00.00" />
+    <insertNewline/>
+  </AARImports>
+
+  
+  <buildGradleAdditions>
+    <insert>
+      dependencies {
+      implementation('com.gaa.iap.sdk:iap-release:19.00.00')
+      }
+    </insert>
+  </buildGradleAdditions>
+    -->
+
+  <!-- optional additions to the GameActivity imports in GameActivity.java -->
+
+  <gameActivityImportAdditions>
+        <insert>
+          import com.gaa.unreal.plugin.iap.PurchaseClientNative;
+          import com.gaa.unreal.plugin.iap.AppSecurity;
+        </insert>
+
+          <!-- Test 팝업을 위한 설정이다 실제 다이얼로그를 보여주지 않을 거라면 삭제해도 무방하다-->
+        <insert>
+          import android.content.Context;
+          
+          import android.app.AlertDialog;
+          import android.content.DialogInterface;
+        </insert>
+  </gameActivityImportAdditions>
+
+
+  <resourceCopies>
+    <copyFile src="$S(PluginDir)/lib/onestore_iap19.00.jar" dst="$S(BuildDir)/libs/onestore_iap19.00.jar" /> 
+    <copyFile src="$S(PluginDir)/lib/onestoreUnreal.jar" dst="$S(BuildDir)/libs/onestoreUnreal.jar" />
+    <copyFile src="$S(PluginDir)/assets/global-appstores.json" dst="$S(BuildDir)/assets/global-appstores.json" />
+
+  </resourceCopies>
+  
+</root>
