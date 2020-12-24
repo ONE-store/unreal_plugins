@@ -93,7 +93,7 @@ As for in-app calls, memory issues might happen, so it is recommended to search 
 
 ## AdapterSourceCode : Source codes of onestoreUnreal.jar  
 
-Source code for the adapter library.
+Source code for the adapter library. <br>
 Download and build to make changes to the Unreal plugins.
 
 
