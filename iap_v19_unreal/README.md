@@ -8,6 +8,13 @@ You can see the detail guide in the ONEstore developer center. <br>
 - 4.25 
 
 
+## Proguard
+If app is using the ProGuard, should be the following exception : 
+```
+ -keep class com.gaa.unreal.plugin.iap.*{ *; }
+```
+
+
 ## OneStoreIap : Blue Prints for Unreal And android libraries
 
 
