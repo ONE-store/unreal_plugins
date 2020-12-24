@@ -1,7 +1,7 @@
 # ONE store InApp v19 unreal plugins (Beta)
 
-You can see the detail guide in the ONEstore developer center. <br>
-[Please click here to a guide.](https://dev.onestore.co.kr/wiki/en/x/9wJZ)
+The detail guide stay in the ONE store dev center. <br>
+[Please click here go to a guide.](https://dev.onestore.co.kr/wiki/en/x/9wJZ)
 
 ## Supported Engine Version
 
