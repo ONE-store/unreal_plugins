@@ -1,9 +1,9 @@
 # ONE store Unreal Plugins
 
-ONE store provide the unreal plugins of the SDKs.<br>
+ONE store provides the unreal plugins of the SDKs.<br>
 We are getting feedback on improvements.<br><br>
 
-Our plugins was developed on the 4.25 version of engine. <br>
+Our plugins were developed on the 4.25 version of engine. <br>
 
 If you have any questions, please contact the ONE store dev center.<br><br>
 
@@ -15,3 +15,6 @@ If you have any questions, please contact the ONE store dev center.<br><br>
 |IAP V19| O | O |
 |ALC 1.0| O | X |
 
+
+## Release Note
+[releases page.](https://github.com/ONE-store/unreal_plugins/releases)
