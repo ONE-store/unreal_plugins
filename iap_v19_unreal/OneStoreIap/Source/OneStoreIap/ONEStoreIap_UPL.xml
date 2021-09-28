@@ -20,6 +20,21 @@
 
 
   <androidManifestUpdates>
+
+    <!-- For Android 30(Query)-->
+    <addElements tag="manifest">
+    <queries>
+        <intent>
+            <action android:name="com.onestore.ipc.iap.IapService.ACTION" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="onestore" />
+        </intent>
+    </queries>
+
+    </addElements>
+    
     <addElements tag="application">
       <meta-data android:name="iap:api_version" android:value="6" />
       <meta-data android:value="popup" android:name="iap:view_option"/>
@@ -172,7 +187,7 @@
 
 
   <resourceCopies>
-    <copyFile src="$S(PluginDir)/lib/onestore_iap19.00.jar" dst="$S(BuildDir)/libs/onestore_iap19.00.jar" /> 
+    <copyFile src="$S(PluginDir)/lib/onestore_iap19.00.02.jar" dst="$S(BuildDir)/libs/onestore_iap19.00.02.jar" /> 
     <copyFile src="$S(PluginDir)/lib/onestoreUnreal.jar" dst="$S(BuildDir)/libs/onestoreUnreal.jar" />
     <copyFile src="$S(PluginDir)/assets/global-appstores.json" dst="$S(BuildDir)/assets/global-appstores.json" />
 
