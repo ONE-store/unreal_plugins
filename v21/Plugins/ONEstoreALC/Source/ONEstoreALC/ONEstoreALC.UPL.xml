@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+    <gradleCopies>
+      <log text="Modifying Gradle version used by replacing gradle-wrapper.properties"/>
+      <copyFile src="$S(PluginDir)/ONEstoreNativeIapHelper/gradle-wrapper.properties"
+                dst="$S(BuildDir)/gradle/gradle/wrapper/gradle-wrapper.properties" />
+    </gradleCopies>
+
+    <gradleProperties>
+      <insertValue value="ANDROID_TOOLS_BUILD_GRADLE_VERSION=com.android.tools.build:gradle:7.3.1"/>
+      <insertNewline/>
+    </gradleProperties>  
+    -->
+
+    <baseBuildGradleAdditions>
+      <insert>
+        allprojects {
+            repositories {
+                maven { url 'https://repo.onestore.co.kr/repository/onestore-sdk-public' }
+            }
+        }
+      </insert>
+    </baseBuildGradleAdditions>
+
+
+    <proguardAdditions>
+      <insert>
+        -keep class com.gaa.**{*;}
+        -keep class com.onestore.**{*;}
+      </insert>
+    </proguardAdditions>
+  
+  
+    <resourceCopies>        
+        <copyFile src="$S(PluginDir)/ONEstoreNativeAlcHelper/ONEstoreALC.jar"
+                  dst="$S(BuildDir)/libs/ONEstoreALC.jar" />
+        <copyFile src="$S(PluginDir)/ONEstoreNativeAlcHelper/libs/armeabi-v7a/libONEstoreNativeAlcHelper.so"
+					        dst="$S(BuildDir)/libs/armeabi-v7a/libONEstoreNativeAlcHelper.so" />
+        <copyFile src="$S(PluginDir)/ONEstoreNativeAlcHelper/libs/arm64-v8a/libONEstoreNativeAlcHelper.so"
+					        dst="$S(BuildDir)/libs/arm64-v8a/libONEstoreNativeAlcHelper.so" />
+        <copyFile src="$S(PluginDir)/ONEstoreNativeAlcHelper/libs/x86/libONEstoreNativeAlcHelper.so"
+					        dst="$S(BuildDir)/libs/x86/libONEstoreNativeAlcHelper.so" />
+        <copyFile src="$S(PluginDir)/ONEstoreNativeAlcHelper/libs/x86_64/libONEstoreNativeAlcHelper.so"
+					        dst="$S(BuildDir)/libs/x86_64/libONEstoreNativeAlcHelper.so" />
+    </resourceCopies>
+
+    
+    <buildGradleAdditions>
+      <insert>
+        android.compileOptions {
+          sourceCompatibility( JavaVersion.VERSION_1_8 )
+          targetCompatibility( JavaVersion.VERSION_1_8 )
+        }
+
+        dependencies {
+          implementation fileTree(dir: 'libs', include:[ 'ONEstoreALC.jar' ] )
+          
+          def onestore_alc_version = "2.0.0"
+          implementation "com.onestorecorp.sdk:sdk-licensing:$onestore_alc_version"
+          
+          def onestore_config_version = "1.0.0"
+          def onestore_config_region = "sdk-configuration-kr"
+          implementation "com.onestorecorp.sdk:$onestore_config_region:$onestore_config_version"
+        }
+      </insert>
+    </buildGradleAdditions>
+
+ 
+  
+    <gameActivityImportAdditions>
+        <insert>
+            import com.onestore.sdk.helper.NativeAlcHelper;
+        </insert>
+    </gameActivityImportAdditions>
+
+  
+    <gameActivityOnCreateAdditions>
+        <insert>
+            com.onestore.sdk.helper.NativeAlcHelper.init( this );
+        </insert>
+    </gameActivityOnCreateAdditions>
+
+
+
+    <gameActivityOnDestroyAdditions>
+        <insert>
+            com.onestore.sdk.helper.NativeAlcHelper.destroy();
+        </insert>
+    </gameActivityOnDestroyAdditions>
+
+  
+    <androidManifestUpdates>
+        <setBool result="bQueriesExist" value="false"/>
+      
+        <loopElements tag="action">
+            <if condition="bQueriesExist">
+                <false>
+                    <setStringFromAttribute result="queriesName" tag="$" name="android:name" />
+                    <setBoolIsEqual result="bQueriesExist" arg1="$S(queriesName)" arg2="com.onestore.ipc.iap.IapService.ACTION" />
+                </false>
+            </if>
+        </loopElements>
+      
+        <if condition="bQueriesExist">
+            <false>
+                <addElements tag="manifest">
+                    <queries>
+                        <intent>
+                            <action android:name="com.onestore.ipc.iap.IapService.ACTION" />
+                        </intent>
+                        <intent>
+                            <action android:name="android.intent.action.VIEW" />
+                            <data android:scheme="onestore" />
+                        </intent>
+                    </queries>
+                </addElements>
+            </false>
+        </if>
+    </androidManifestUpdates>
+</root>
