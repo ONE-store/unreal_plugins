@@ -4,13 +4,14 @@
 >    * ONEstoreALC : support v2. 
 >    * ONEstoreIAP : support v21.
 
+<br><br>
 # Environment
    ### The environment for this document is as follows:
 >* NDK : 21.4.7075529
 >* UnReal v4.25.4
 >* Microsoft Visual C++ 2017
 
-
+<br><br>
 # Folder Structure
 >   - Plugins
 >       - ONEstoreALC
@@ -76,22 +77,22 @@
 >     - ONEstoreSample.uasset
 
 <br><br>
-# The integration is as follows( Windows )
-```
-1. create C++ UnReal Project.
+# How To Build( Windows )
+>
+> 1. create C++ UnReal Project.
+>
+> 2. copy Plugins/*.*  to unreal_project/Plugins/*.*
+>
+> 3. unreal_project.uproject file -> context menu -> "Generate Visual studio project files" click in explorer.
+>
+> 4. refresh project and build in Visual Studio
+>
+> 5. open UnReal project using UnReal Editer
+>
+> Now you can find and use ONEstore BluePrint on the asset you want to use.
 
-2. copy Plugins/*.*  to unreal_project/Plugins/*.*
 
-3. unreal_project.uproject file -> context menu -> "Generate Visual studio project files" click in explorer.
-
-4. refresh project and build in Visual Studio
-
-5. open UnReal project using UnReal Editer
-
-Now you can find and use ONEstore BluePrint on the asset you want to use.
-```
-
-
+<br><br>
 # How To Use
 >ONEstore BluePrint Plugin is a module designed to use ONEstore ALC and IAP sdk using blueprints in UnReal projects.<br>
 >For a detailed description of each API, please refer to the One store Developer Site( https://dev.onestore.co.kr ).<br>
@@ -110,8 +111,6 @@ Now you can find and use ONEstore BluePrint on the asset you want to use.
 
 
 <br><br>
-
-
 # Notice
 >* If you have build issues, please see the UPL.xml file in the module.
 >* If you have any questions, please contact the One store Developer Site( https://dev.onestore.co.kr ).
