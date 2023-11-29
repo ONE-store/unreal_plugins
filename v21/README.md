@@ -1,4 +1,4 @@
-# ONEstore BluePrint Plugin for UnReal Engine
+# ONEstore ALC(App Licence Checker) and IAP(InApp Purchase) BluePrint Plugin for UnReal Engine
 
 >This module is a Blueprint plugin sorce for Unreal created to support ONEstore ALC(App License Checker) and IAP(In-app Purchase SDK).
 >    * ONEstoreALC : support v2. 
