@@ -56,12 +56,8 @@
             dependencies {
                 implementation fileTree(dir: 'libs', include:[ 'ONEstoreIap.jar' ] )
 
-                def onestore_iap_version = "21.00.01"
+                def onestore_iap_version = "21.01.00"
                 implementation "com.onestorecorp.sdk:sdk-iap:$onestore_iap_version"
-
-                def onestore_config_version = "1.0.0"
-                def onestore_config_region = "sdk-configuration-kr"
-                implementation "com.onestorecorp.sdk:$onestore_config_region:$onestore_config_version"
             }
         </insert>
     </buildGradleAdditions>
