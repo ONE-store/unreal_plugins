@@ -56,12 +56,8 @@
         dependencies {
           implementation fileTree(dir: 'libs', include:[ 'ONEstoreALC.jar' ] )
           
-          def onestore_alc_version = "2.0.0"
-          implementation "com.onestorecorp.sdk:sdk-licensing:$onestore_alc_version"
-          
-          def onestore_config_version = "1.0.0"
-          def onestore_config_region = "sdk-configuration-kr"
-          implementation "com.onestorecorp.sdk:$onestore_config_region:$onestore_config_version"
+          def onestore_alc_version = "2.1.0"
+          implementation "com.onestorecorp.sdk:sdk-licensing:$onestore_alc_version"          
         }
       </insert>
     </buildGradleAdditions>
