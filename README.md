@@ -3,7 +3,10 @@
 ONE store provides the unreal plugins of the SDKs.<br>
 We are getting feedback on improvements.<br><br>
 
-Our plugins were developed on the 4.25 version of engine. <br>
+ONEstore SDK (IAP v21.01, ALC 2.1) For Unreal 5.1 or later versions : https://github.com/ONE-store/unreal_plugins/tree/release/unreal_5.1 <br>
+ONEstore SDK (IAP v21.01, ALC 2.1) For Unreal 5.0 or lower versions : https://github.com/ONE-store/unreal_plugins/tree/release/unreal_4.25 <br>
+ONEstore SDK (IAP v19) For Unreal : https://github.com/ONE-store/unreal_plugins/tree/archive/iap_v19_unreal <br>
+
 
 If you have any questions, please contact the ONE store dev center.<br><br>
 
