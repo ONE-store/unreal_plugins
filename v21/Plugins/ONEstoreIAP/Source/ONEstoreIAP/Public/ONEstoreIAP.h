@@ -1,7 +1,4 @@
-/*
- * Do Not Modify This File.
- * Copyright @ 2022, ONEstore. All rights reserved.
- */
+// Copyright Epic Games, Inc. All Rights Reserved.
 
 #pragma once
 

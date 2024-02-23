@@ -15,10 +15,19 @@ UONEstoreIAPManageRecurringProductAsync::UONEstoreIAPManageRecurringProductAsync
 UONEstoreIAPManageRecurringProductAsync* UONEstoreIAPManageRecurringProductAsync::ManageRecurringProductAsync(
 	const UObject* pWorld, const FONEstorePurchaseData& data, const EONEstoreRecurringState state )
 {
-	UONEstoreIAPManageRecurringProductAsync* pthis = NewObject<UONEstoreIAPManageRecurringProductAsync>();
+	UONEstoreIAPManageRecurringProductAsync* pthis = 
+		NewObject<UONEstoreIAPManageRecurringProductAsync>();
 	pthis->m_pWorld = pWorld;
 	pthis->m_data = data;
 	pthis->m_state = state;
+
+#if PLATFORM_ANDROID
+	say("d. check in");
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+	pthis->m_data.dump();
+	say("d. recurreing state( %d )", (int)pthis->m_state);
+#endif 
+#endif 
 
 	return pthis;
 }
@@ -27,20 +36,31 @@ UONEstoreIAPManageRecurringProductAsync* UONEstoreIAPManageRecurringProductAsync
 void UONEstoreIAPManageRecurringProductAsync::Activate()
 {
 #if PLATFORM_ANDROID
+	say("d. check in");
 	getListener()->m_OnRecurringStateListener.BindUObject(
 		this, &UONEstoreIAPManageRecurringProductAsync::OnCompleted );
 
-	NativeIapHelper->manageRecurringProductAsync(
-		UNREAL_TO_ONESTORE_PURCHASEDATA(m_data).get(), (RecurringState)m_state);
+	PurchaseDataCore core( TCHAR_TO_UTF8(*(m_data.OriginalJson)),
+						   TCHAR_TO_UTF8( *(m_data.Signature)),
+						   TCHAR_TO_UTF8( *(m_data.BillingKey)) );
+	NativeIapHelper->manageRecurringProductAsync( &core, (RecurringState)m_state );
 #endif 
+
 }
 
 
-void UONEstoreIAPManageRecurringProductAsync::OnCompleted(const int32& code, const FString& message,
-														  const FONEstorePurchaseData& data, 
-														  const EONEstoreRecurringState& state)
-{
+void UONEstoreIAPManageRecurringProductAsync::OnCompleted( const int32& code, 
+														   const FString& message,
+														   const FONEstorePurchaseData& data, 
+														   const EONEstoreRecurringState& state )
+{	
 #if PLATFORM_ANDROID	
+	say("d. check in");
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+	say("d. result( %d, %s ). RecurringState( %d )", code, TCHAR_TO_UTF8(*message), state);
+	data.dump();
+#endif
+	
 	switch ((ResponseCode)code) {
 	case ResponseCode::RESULT_OK:
 		OnSuccess.Broadcast(code, message, data, state);	break;
@@ -53,3 +73,4 @@ void UONEstoreIAPManageRecurringProductAsync::OnCompleted(const int32& code, con
 	}
 #endif
 }
+

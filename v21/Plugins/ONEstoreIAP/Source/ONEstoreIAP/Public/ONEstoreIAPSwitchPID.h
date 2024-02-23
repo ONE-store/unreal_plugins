@@ -6,7 +6,7 @@
 #pragma once
 
 #include "ONEstoreIapBase.h"
-#include "ONEstoreIAPIsReady.generated.h"
+#include "ONEstoreIAPSwitchPID.generated.h"
 
 /* 
 *	Function library class.
@@ -27,10 +27,12 @@
 */
 
 UCLASS(MinimalAPI)
-class UONEstoreIAPIsReady : public UONEstoreIAPSyncBase
+class UONEstoreIAPSwitchPID : public UBlueprintFunctionLibrary
 {
 	GENERATED_UCLASS_BODY()
 
-	UFUNCTION(BlueprintCallable, Category = "ONEstore|IAP")
-	static bool IsReady();
+	// for test
+	UFUNCTION(BlueprintPure, Category = "ONEstore|IAP")
+	static FString SwitchPID( FString pid );	
 };
+

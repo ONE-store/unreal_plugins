@@ -15,9 +15,10 @@ UONEstoreIAPLaunchPurchaseFlow::UONEstoreIAPLaunchPurchaseFlow(const FObjectInit
 UONEstoreIAPLaunchPurchaseFlow* UONEstoreIAPLaunchPurchaseFlow::LaunchPurchaseFlow(
 	const UObject* pWorld,
 	const FString& product_id, const EONEstoreProductType type, const FString& developer_payload,
-	const FString& product_name, const FString& game_user_id, const int quantity, const bool promotion_applicable)
+	const FString& product_name, const FString& game_user_id, const int32 quantity, const bool promotion_applicable)
 {
-	UONEstoreIAPLaunchPurchaseFlow* pthis = NewObject<UONEstoreIAPLaunchPurchaseFlow>();
+	UONEstoreIAPLaunchPurchaseFlow* pthis = 
+		NewObject<UONEstoreIAPLaunchPurchaseFlow>();
 	pthis->m_pWorld = pWorld;
 	pthis->m_product_id = product_id;
 	pthis->m_type = type;
@@ -27,27 +28,45 @@ UONEstoreIAPLaunchPurchaseFlow* UONEstoreIAPLaunchPurchaseFlow::LaunchPurchaseFl
 	pthis->m_quantity = quantity;
 	pthis->m_promotion_applicable = promotion_applicable;
 
+#if PLATFORM_ANDROID
+	say("d. check in");
+#endif
+
 	return pthis;
 }
 
 
 void UONEstoreIAPLaunchPurchaseFlow::Activate()
 {
-#if PLATFORM_ANDROID	
+#if PLATFORM_ANDROID
+	say("d. check in");
 	getListener()->m_OnPurchaseDataListListener.BindUObject(
 		this, &UONEstoreIAPLaunchPurchaseFlow::OnCompleted);
 
-	NativeIapHelper->launchPurchaseFlow( 
-		TCHAR_TO_UTF8(*m_product_id ), (ProductType)m_type, TCHAR_TO_UTF8(*m_developer_payload), 
-		TCHAR_TO_UTF8(*m_product_name), TCHAR_TO_UTF8(*m_game_user_id), m_quantity, m_promotion_applicable );
+	NativeIapHelper->launchPurchaseFlow( TCHAR_TO_UTF8(*m_product_id ),
+										 (ProductType)m_type, 
+										 TCHAR_TO_UTF8(*m_developer_payload), 
+										 TCHAR_TO_UTF8(*m_product_name), 
+										 TCHAR_TO_UTF8(*m_game_user_id),
+										 m_quantity, 
+										 m_promotion_applicable );
 #endif 
 }
 
 
-void UONEstoreIAPLaunchPurchaseFlow::OnCompleted(const int32& code, const FString& message,
-												 const TArray<FONEstorePurchaseData>& list)
+void UONEstoreIAPLaunchPurchaseFlow::OnCompleted( const int32& code, 
+												  const FString& message,
+												  const TArray<FONEstorePurchaseData>& list)
 {
-#if PLATFORM_ANDROID	
+#if PLATFORM_ANDROID
+	say("d. check in");
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+	say("d. result( %d, %s )", code, TCHAR_TO_UTF8(*message));
+	for (auto& iter : list) {
+		iter.dump();
+	}
+#endif
+
 	switch ((ResponseCode)code) {
 	case ResponseCode::RESULT_OK:
 		OnSuccess.Broadcast(code, message, list);	break;

@@ -45,7 +45,7 @@ void ONEstoreALCListener::onGranted( const char* license, const char* signature 
 
 void ONEstoreALCListener::onDenied()
 {
-	int32_t nret = 9999;
+	int32_t nret = 99;
 	FString fmsg( UTF8_TO_TCHAR( "denied" ) );
 	FString femptyString( UTF8_TO_TCHAR( "" ) );
 	m_OnResultListener.ExecuteIfBound( nret, fmsg, femptyString, femptyString );
@@ -85,7 +85,3 @@ ONEstoreALCListener* UONEstoreALCAsyncBase::getListener() {
 }
 #endif
 
-
-
-//-----------------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------

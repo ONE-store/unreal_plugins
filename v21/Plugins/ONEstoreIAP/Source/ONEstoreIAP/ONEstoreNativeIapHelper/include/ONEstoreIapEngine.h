@@ -14,6 +14,7 @@
 #include "ONEstoreIapResult.h"
 #include "ONEstoreIapProductDetail.h"
 #include "ONEstoreIapPurchaseData.h"
+#include "ONEstoreIapPurchaseDataCore.h"
 
 
 //--------------------------------------------------------------------------------------------------
@@ -32,44 +33,59 @@ public:
     virtual ~Engine();
 
     // OneStore IAP API
+
+    bool            init( JNIEnv* env, jobject activity, CallbacksListener* p = nullptr );
     void            changeCallbacksListener( CallbacksListener* p );
 
     int             setLogLevel( LogLevel level );
     LogLevel        getLogLevel();
 
-    ConnectionState getConnectionState();
     bool            isReady();
 
-    int             queryPurchasesAsync( ProductType product_type );
+    std::unique_ptr<IapResult> isFeatureSupported( const char* feature );
+
+    ConnectionState getConnectionState();
+
+
+    // last product name must be terminate null.
     int             queryProductDetailsAsync( ProductType product_type,
-                                              std::list<std::string>* list );
+                                              const char* productName,
+                                              ... ) __attribute__((sentinel));
+
+    int             queryProductDetailsAsync( ProductType product_type,
+                                              std::list<std::string>& list );
+
+    int             queryPurchasesAsync( ProductType product_type );
 
     int             launchLoginFlowAsync();
-    int             launchUpdateOrInstallFlow();
+    int             launchSilentLoginFlow();
 
+    int             launchUpdateOrInstallFlow();
     int             launchPurchaseFlow( const char* product_id,
                                         ProductType product_type,
-                                        const char* developer_payload,          // optional
-                                        const char* product_name,               // optional
-                                        const char* game_user_id,               // optional
+                                        const char* developer_payload,
+                                        const char* product_name,
+                                        const char* game_user_id,
                                         const int   quantity,
                                         const bool  promotion_applicable );
+
     int             launchUpdateSubscription( const char* product_id,
-                                              const char* developer_payload,    // optional
-                                              const char* product_name,         // optional
+                                              const char* developer_payload,
+                                              const char* product_name,
                                               const char* old_purchase_token,
                                               ProrationMode proration_mode );
-    int             launchManageSubscription( PurchaseData* pData = nullptr );  // optional
 
-    int             consumeAsync( PurchaseData* data );
-    int             acknowledgeAsync( PurchaseData* data );
-
-    int             manageRecurringProductAsync( PurchaseData* data, RecurringState state );
+    int             acknowledgeAsync( PurchaseDataCore* p );
+    int             consumeAsync( PurchaseDataCore* p );
+    int             launchManageSubscription( PurchaseDataCore* p );
+    int             manageRecurringProductAsync( PurchaseDataCore* p, RecurringState state );
+    int             verifyPurchaseData( PurchaseDataCore* p, const char* publicKey );
 
     int             getStoreInfoAsync();
-    bool            verifyPurchaseData( const char* publicKey, PurchaseData* data );
     void            showToast( const char* fmt, ... );
+
     // OneStore IAP API end.
+
 };
 
 extern std::unique_ptr<Engine> NativeIapHelper;

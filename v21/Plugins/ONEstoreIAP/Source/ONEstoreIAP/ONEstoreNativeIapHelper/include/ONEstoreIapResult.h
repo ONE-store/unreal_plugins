@@ -5,7 +5,6 @@
 
 #pragma once
 
-#include "ONEstoreIapObject.h"
 #include <jni.h>
 #include <string>
 
@@ -22,7 +21,7 @@ namespace ONESTORE_IAP{
 
 enum class ResponseCode;
 
-class IapResult : public IapObject {
+class IapResult{
 public:
     IapResult(jobject obj);
 
@@ -44,7 +43,7 @@ public:
 
     static std::unique_ptr<IapResult> getIapResult( jobject obj );
 
-private:
+public:
     int             code;
     std::string     message;
 };

@@ -16,10 +16,17 @@ UONEstoreIAPQueryPurchasesAsync::UONEstoreIAPQueryPurchasesAsync(const FObjectIn
 UONEstoreIAPQueryPurchasesAsync* UONEstoreIAPQueryPurchasesAsync::QueryPurchaseAsync(
 	const UObject* pWorld, const EONEstoreProductType type )
 {
-	UONEstoreIAPQueryPurchasesAsync* pthis = NewObject<UONEstoreIAPQueryPurchasesAsync>();
+	UONEstoreIAPQueryPurchasesAsync* pthis = 
+		NewObject<UONEstoreIAPQueryPurchasesAsync>();
 	pthis->m_pWorld = pWorld;
 	pthis->m_productType = type;
 
+#if PLATFORM_ANDROID
+	say("d. check in");
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+	say("d. productType( %d ).", pthis->m_productType );
+#endif 
+#endif 
 	return pthis;
 }
 
@@ -27,20 +34,28 @@ UONEstoreIAPQueryPurchasesAsync* UONEstoreIAPQueryPurchasesAsync::QueryPurchaseA
 void UONEstoreIAPQueryPurchasesAsync::Activate()
 {
 #if PLATFORM_ANDROID
-	getListener()->m_OnPurchaseDataListListener.BindUObject(
-		this, &UONEstoreIAPQueryPurchasesAsync::OnCompleted);
+	say("d. check in"); 
 
-	NativeIapHelper->queryPurchasesAsync((ProductType)m_productType);
+	getListener()->m_OnPurchaseDataListListener.BindUObject(
+		this, &UONEstoreIAPQueryPurchasesAsync::OnCompleted );
+	
+	NativeIapHelper->queryPurchasesAsync( (ProductType)m_productType );
 #endif
 }
 
 
-
-void UONEstoreIAPQueryPurchasesAsync::OnCompleted(const int32& code, const FString& message,
-												  const TArray<FONEstorePurchaseData>& list)
+void UONEstoreIAPQueryPurchasesAsync::OnCompleted( const int32& code, 
+												   const FString& message,
+												   const TArray<FONEstorePurchaseData>& list )
 {
 #if PLATFORM_ANDROID
+	say("d. check in");	
+
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT	
+	say("d. result( %d, %s ). list item count( %d ).", code, TCHAR_TO_UTF8(*message), list.Num());
+	for (auto& iter : list) {
+		iter.dump();
+	}
 #endif
 
 	switch ((ResponseCode)code) {
@@ -53,5 +68,6 @@ void UONEstoreIAPQueryPurchasesAsync::OnCompleted(const int32& code, const FStri
 	default:
 		OnFailure.Broadcast(code, message, list); break;
 	}
+
 #endif
 }

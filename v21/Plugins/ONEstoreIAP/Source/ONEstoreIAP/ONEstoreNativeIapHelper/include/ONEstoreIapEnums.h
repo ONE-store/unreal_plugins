@@ -7,7 +7,6 @@
 
 #include <jni.h>
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -28,6 +27,13 @@ enum class ConnectionState{
     CONNECTING,
     CONNECTED,
     CLOSED
+};
+
+
+enum class FeatureType{
+    SUBSCRIPTIONS = 0,          // "subscriptions";
+    SUBSCRIPTIONS_UPDATE,       // "subscriptionsUpdate";
+    PRICE_CHANGE_CONFIRMATION   // "priceChangeConfirmation";
 };
 
 
@@ -88,6 +94,49 @@ enum class ProrationMode{
      */
     DEFERRED
 };
+
+
+//--------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------
+
+#ifndef isSameString
+#define isSameString( a, b )                strncmp( a, b, strlen( a ) ) ? false : true
+#endif
+
+
+inline const char* getRecurringStateName( RecurringState state ){
+    return ( state == RecurringState::RECURRING ) ? "reactivate" :
+           ( state == RecurringState::CANCEL ) ? "cancel" : "unknown";
+}
+
+
+inline RecurringState getRecurringState( const char* type ){
+    if( type == nullptr )
+        return RecurringState::NON_AUTO_PRODUCT;
+
+    return ( isSameString( type, "reactivate" ) ) ? RecurringState::RECURRING :
+           ( isSameString( type, "cancel" ) ) ? RecurringState::CANCEL : RecurringState::NON_AUTO_PRODUCT;
+}
+
+
+inline const char* getProductTypeName( enum ProductType type ){
+    return ( type == ProductType::INAPP ) ? "inapp" :
+           ( type == ProductType::AUTO ) ? "auto"  :
+           ( type == ProductType::SUBS ) ? "subscription" :
+           ( type == ProductType::ALL ) ? "all" : "unknown";
+}
+
+
+inline ProductType getProductType( const char* type ){
+    if( type == nullptr )
+        return ProductType::UNKNOWN;
+
+    return ( isSameString( type, "inapp" ) ) ? ProductType::INAPP :
+           ( isSameString( type, "auto" ) ) ? ProductType::AUTO :
+           ( isSameString( type, "subscription" ) ) ? ProductType::SUBS :
+           ( isSameString( type, "all" ) ) ? ProductType::ALL : ProductType::UNKNOWN;
+}
+
 
 
 }

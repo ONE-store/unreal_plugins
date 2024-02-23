@@ -11,6 +11,7 @@
 
 #if PLATFORM_ANDROID
 #include "../ONEstoreNativeIapHelper/include/ONEstoreIapEngine.h"
+#include "../ONEstoreNativeIapHelper/include/ONEstoreIapSay.h"
 using namespace ONESTORE_IAP;
 #endif
 
@@ -116,9 +117,10 @@ public:
 
 
 #if PLATFORM_ANDROID
-	FONEstoreIapResult(std::unique_ptr<IapResult>& result) {
-		code = (int32)result->getResponseCode();
-		message = UTF8_TO_TCHAR(result->getMessage());
+	//FONEstoreIapResult( std::unique_ptr<IapResult> result ){
+	FONEstoreIapResult(IapResult* pResult){
+		code = (int32)pResult->getResponseCode();
+		message = UTF8_TO_TCHAR(pResult->getMessage());
 	}
 #endif
 
@@ -184,6 +186,31 @@ struct FONEstoreProductDetail
 	FString PaymentGracePeriod;
 	UPROPERTY(BlueprintReadOnly)
 	EONEstoreProductType Type;
+
+
+#if PLATFORM_ANDROID
+	void dump() const{
+		say2("ProductDetail ======================================================================");
+		say2("OriginalJson : %s", TCHAR_TO_UTF8(*OriginalJson));
+		say2("ProductId : %s", TCHAR_TO_UTF8(*ProductId));
+		say2("Title : %s", TCHAR_TO_UTF8(*Title));
+		say2("Type : %s",
+			Type == EONEstoreProductType::INAPP ? "inapp" :
+			Type == EONEstoreProductType::AUTO ? "auto" :
+			Type == EONEstoreProductType::SUBS ? "subs" : "all");
+		say2("Price : %s", TCHAR_TO_UTF8(*Price));
+		say2("PriceAmountMicros : %s", TCHAR_TO_UTF8(*PriceAmountMicros));
+		say2("PriceCurrencyCode : %s", TCHAR_TO_UTF8(*PriceCurrencyCode));
+		say2("SubscriptionPeriodUnitCode : %s", TCHAR_TO_UTF8(*SubscriptionPeriodUnitCode));
+		say2("SubscriptionPeriod : %s", TCHAR_TO_UTF8(*SubscriptionPeriod));
+		say2("FreeTrialPeriod : %s", TCHAR_TO_UTF8(*FreeTrialPeriod));
+		say2("PromotionPrice : %s", TCHAR_TO_UTF8(*PromotionPrice));
+		say2("PromotionPriceMicros : %s", TCHAR_TO_UTF8(*PromotionPriceMicros));
+		say2("PromotionUsePeriod : %s", TCHAR_TO_UTF8(*PromotionUsePeriod));
+		say2("PaymentGracePeriod : %s", TCHAR_TO_UTF8(*PaymentGracePeriod));
+		say2("ProductDetail end ===================================================================");
+	}
+#endif
 };
 
 
@@ -195,11 +222,9 @@ struct FONEstorePurchaseData
 	FONEstorePurchaseData(){
 	};
 
-#if PLATFORM_ANDROID
-	FONEstorePurchaseData(PurchaseData* p) {
-		if (p == nullptr)
-			return;
 
+#if PLATFORM_ANDROID
+	FONEstorePurchaseData(PurchaseData* p) {		
 		OriginalJson = FString(UTF8_TO_TCHAR(p->getOriginalJson()));
 		OrderId = FString(UTF8_TO_TCHAR(p->getOrderId())); 
 		PackageName = FString(UTF8_TO_TCHAR(p->getPackageName())); 
@@ -213,10 +238,12 @@ struct FONEstorePurchaseData
 		purchaseState = (EONEstorePurchaseState)p->getPurchaseState(); 
 		recurringState = (EONEstoreRecurringState)p->getRecurringState();
 		Quantity = p->getQuantity();
-		Signature = FString(UTF8_TO_TCHAR(p->getSignature()));
+		Signature = FString(UTF8_TO_TCHAR(p->getSignature()));		
 	}
+
 #endif
-	
+
+
 	UPROPERTY(BlueprintReadOnly)
 	FString OriginalJson;	
 	UPROPERTY(BlueprintReadOnly)
@@ -245,67 +272,41 @@ struct FONEstorePurchaseData
 	EONEstorePurchaseState purchaseState;		
 	UPROPERTY(BlueprintReadOnly)
 	EONEstoreRecurringState recurringState;
-
-};
-
-
-
+	
+	
 
 #if PLATFORM_ANDROID
-class UNREAL_TO_ONESTORE_PRODUCTDETAIL : public ProductDetail{
-public:
-	UNREAL_TO_ONESTORE_PRODUCTDETAIL( const FONEstoreProductDetail* p) {
-		OrigJson = TCHAR_TO_UTF8(*(p->OriginalJson));
-		ProductId = TCHAR_TO_UTF8(*(p->ProductId));
-		Title = TCHAR_TO_UTF8(*(p->Title));
-		Price = TCHAR_TO_UTF8(*(p->Price));
-		PriceAmountMicros = TCHAR_TO_UTF8(*(p->PriceAmountMicros));
-		PriceCurrencyCode = TCHAR_TO_UTF8(*(p->PriceCurrencyCode));
-		SubscriptionPeriod = TCHAR_TO_UTF8(*(p->SubscriptionPeriod));
-		SubscriptionPeriodUnitCode = TCHAR_TO_UTF8(*(p->SubscriptionPeriodUnitCode));
-		FreeTrialPeriod = TCHAR_TO_UTF8(*(p->FreeTrialPeriod));
-		PromotionPrice = TCHAR_TO_UTF8(*(p->PromotionPrice));
-		PromotionPriceMicros = TCHAR_TO_UTF8(*(p->PromotionPriceMicros));
-		PromotionUsePeriod = TCHAR_TO_UTF8(*(p->PromotionUsePeriod));
-		PaymentGracePeriod = TCHAR_TO_UTF8(*(p->PaymentGracePeriod));
-		productType = (ProductType)p->Type;
-	};
+	void dump() const{
+#if (UE_BUILD_SHIPPING != 0) 
+		say2("FONEstorePurchaseData PurchaseData ======================================================================");
+		say2("OriginalJson : %s", TCHAR_TO_UTF8(*OriginalJson));
+		say2("OrderId : %s", TCHAR_TO_UTF8(*OrderId));
+		say2("PackageName : %s", TCHAR_TO_UTF8(*PackageName));
+		say2("ProductId : %s", TCHAR_TO_UTF8(*ProductId));
+		say2("PurchaseTime : %lld", PurchaseTime); 
+		say2("isAcknowledged : %s", IsAcknowledged ? "true" : "false");
+		say2("DeveloperPayload : %s", TCHAR_TO_UTF8(*DeveloperPayload));
+		say2("PurchaseId : %s", TCHAR_TO_UTF8(*PurchaseId));
+		say2("PurchaseToken : %s", TCHAR_TO_UTF8(*PurchaseToken));
+		say2("BillingKey : %s", TCHAR_TO_UTF8(*BillingKey));
+		say2("PurchaseState : %s", 
+			purchaseState == EONEstorePurchaseState::PURCHASED ? "PURCHASED" :
+			purchaseState == EONEstorePurchaseState::CANCEL ? "CANCEL" :
+			purchaseState == EONEstorePurchaseState::REFUND ? "REFUND" : "UNSPECIFIED_STATE" );
+		say2("RecurringState : %s",
+			recurringState == EONEstoreRecurringState::RECURRING ? "RECURRING" :
+			recurringState == EONEstoreRecurringState::CANCEL ? "CANCEL" : "NON_AUTO_PRODUCT");
 
-	virtual ~UNREAL_TO_ONESTORE_PRODUCTDETAIL(){};
-
-	ProductDetail* get() {
-		return (ProductDetail*)this;
-	}
-	
-};
-
-
-class UNREAL_TO_ONESTORE_PURCHASEDATA : public PurchaseData {
-public:
-	UNREAL_TO_ONESTORE_PURCHASEDATA(const FONEstorePurchaseData& p) {
-		OrigJson = TCHAR_TO_UTF8(*(p.OriginalJson));
-		BillingKey = TCHAR_TO_UTF8(*(p.BillingKey));
-		DeveloperPayload = TCHAR_TO_UTF8(*(p.DeveloperPayload));
-		OrderId = TCHAR_TO_UTF8(*(p.OrderId));
-		PackageName = TCHAR_TO_UTF8(*(p.PackageName));
-		ProductId = TCHAR_TO_UTF8(*(p.ProductId));
-		PurchaseId = TCHAR_TO_UTF8(*(p.PurchaseId));
-		PurchaseToken = TCHAR_TO_UTF8(*(p.PurchaseToken));
-		Signature = TCHAR_TO_UTF8(*(p.Signature));
-		IsAcknowledged = p.IsAcknowledged;
-		PurchaseTime = p.PurchaseTime;
-		Quantity = p.Quantity;
-		purchaseState = (PurchaseState)p.purchaseState;
-		recurringState = (RecurringState)p.recurringState;
-	};
-
-	virtual ~UNREAL_TO_ONESTORE_PURCHASEDATA() {};
-
-	PurchaseData* get() {
-		return (PurchaseData*)this;
-	}
-};
+		say2("Quantity : %d", Quantity);
+		say2("Signature : %s", TCHAR_TO_UTF8(*Signature));
+		say2("FONEstorePurchaseData PurchaseData end ===================================================================");
 #endif
+
+	};
+#endif
+};
+
+
 
 
 
@@ -322,6 +323,20 @@ class UONEstoreIAPShowToast : public UBlueprintFunctionLibrary
 		meta = (DisplayName = "ShowToast", WorldContext = "WorldContext"))
 	static void showToast(FString str);
 };
+
+
+
+//------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------
+// Sync && Async 로 나눠서 super class 필요
+
+// onestore iap client sync & async 함수 분류
+// sync.
+	// endConnection, isReady, getConnectionState, isFeatureSupported, verify
+// async
+	// startConnection, consume, acknowledge, getStoreInfo, launchXXX, manageRecurring, queryXXX
+// no response 
+	// endConnection, launchManageSubscription, 
 
 
 //------------------------------------------------------------------------------------------------------
@@ -350,21 +365,19 @@ public:
 public: 
 	//-------------------------------------------------------------------------------------------------------------
 	//-------------------------------------------------------------------------------------------------------------
-	// onestore nativeiaphelper callback listener	
+	// onestore nativeiaphelper callback listener
 	virtual void onSetupFinished(IapResult* pResult) override;
 	virtual void onServiceDisconnected() override;
-
+	virtual void onPurchasesResponse(IapResult* pResult, std::list<PurchaseData>* plist) override;
 	virtual void onPurchasesUpdated(IapResult* prepResultsult, std::list<PurchaseData> *plist) override;
-	virtual void onQueryPurchasesAsync(IapResult* pResult, std::list<PurchaseData>* plist) override;	
-	virtual void onQueryProductDetailsAsync(IapResult* pResult, std::list<ProductDetail>* plist) override;
-	virtual void onAcknowledgeAsync(IapResult* pResult, PurchaseData* pdata) override;
-	virtual void onConsumeAsync(IapResult* pResult, PurchaseData* pdata) override;
+	virtual void onProductDetailsResponse(IapResult* pResult, std::list<ProductDetail>* plist) override;
+	virtual void onAcknowledgeResponse(IapResult* pResult, PurchaseData* pdata) override;
+	virtual void onConsumeResponse(IapResult* pResult, PurchaseData* pdata) override;
+	virtual void onLaunchLoginFlowResponse(IapResult* pResult) override;
+	virtual void onLaunchUpdateOrInstallFlowResponse(IapResult* pResult) override;
+	virtual void onRecurringResponse(IapResult* pResult, PurchaseData* pdata, enum RecurringState state) override;
+	virtual void onStoreInfoResponse(IapResult* pResult, const char* pinfo) override;
 	
-	virtual void onLaunchLoginFlowAsync(IapResult* pResult) override;
-	virtual void onLaunchUpdateOrInstallFlow(IapResult* pResult) override;
-	
-	virtual void onManageRecurringProductAsync(IapResult* pResult, PurchaseData* pdata, enum RecurringState state) override;
-	virtual void onStoreInfoAsync(IapResult* pResult, const char* pinfo) override;
 
 public:
 	// members

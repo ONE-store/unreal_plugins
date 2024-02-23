@@ -11,6 +11,7 @@
 
 #if PLATFORM_ANDROID
 #include "../ONEstoreNativeAlcHelper/include/ONEstoreAlcEngine.h"
+#include "../ONEstoreNativeAlcHelper/include/ONEstoreAlcError.h"
 #endif
 
 #include "ONEstoreALCBase.generated.h"
@@ -34,16 +35,6 @@ class UONEstoreALCShowToast : public UBlueprintFunctionLibrary
 
 //------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------
-// Sync && Async 로 나눠서 super class 필요
-
-// onestore iap client sync & async 함수 분류
-// sync.
-	// endConnection, isReady, getConnectionState, isFeatureSupported, verify
-// async
-	// startConnection, consume, acknowledge, getStoreInfo, launchXXX, manageRecurring, queryXXX
-// no response 
-	// endConnection, launchManageSubscription, 
-
 
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FOnResult, const int32&, code, const FString&, msg,
@@ -91,3 +82,4 @@ private:
 	static ONEstoreALCListener	m_callbackListener;
 #endif
 };
+

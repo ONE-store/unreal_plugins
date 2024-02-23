@@ -17,42 +17,34 @@ namespace ONESTORE_IAP {
 #define PURE    =0;
 #endif
 
-class IapObject;
 class IapResult;
 class PurchaseData;
 class ProductDetail;
 
-enum class LogLevel;
-enum class ConnectionState;
-enum class ProductType;
-enum class ProrationMode;
 enum class RecurringState;
 
 class CallbacksListener {
 public:
     // callback of acknowledgeAsync()
-    virtual void onAcknowledgeAsync(IapResult *, PurchaseData *) PURE;
+    virtual void onAcknowledgeResponse(IapResult *, PurchaseData *) PURE;
 
     // callback of consumeAsync()
-    virtual void onConsumeAsync(IapResult *, PurchaseData *) PURE;
+    virtual void onConsumeResponse(IapResult *, PurchaseData *) PURE;
 
     // callback of launchLoginFlowAsync()
-    virtual void onLaunchLoginFlowAsync(IapResult *) PURE;
+    virtual void onLaunchLoginFlowResponse(IapResult *) PURE;
 
     // callback of launchUpdateOrInstallFlow()
-    virtual void onLaunchUpdateOrInstallFlow(IapResult *) PURE;
-
-    // callback of manageRecurringProductAsync()
-    virtual void onManageRecurringProductAsync(IapResult *, PurchaseData *, RecurringState) PURE;
-
-    // callback of launchPurchaseFlow(), launchUpdateSubscription
-    virtual void onPurchasesUpdated(IapResult *, std::list <PurchaseData> *) PURE;
+    virtual void onLaunchUpdateOrInstallFlowResponse(IapResult *) PURE;
 
     // callback of queryProductDetailsAsync()
-    virtual void onQueryProductDetailsAsync(IapResult *, std::list <ProductDetail> *) PURE;
+    virtual void onProductDetailsResponse(IapResult *, std::list <ProductDetail> *) PURE;
 
     // callback of queryPurchasesAsync()
-    virtual void onQueryPurchasesAsync(IapResult *, std::list <PurchaseData> *) PURE;
+    virtual void onPurchasesResponse(IapResult *, std::list <PurchaseData> *) PURE;
+
+    // callback of launchPurchaseFlow()
+    virtual void onPurchasesUpdated(IapResult *, std::list <PurchaseData> *) PURE;
 
     // callback of service disconnection
     virtual void onServiceDisconnected() PURE;
@@ -61,10 +53,10 @@ public:
     virtual void onSetupFinished(IapResult *) PURE;
 
     // callback of getStoreInfoAsync()
-    virtual void onStoreInfoAsync(IapResult *, const char* ) PURE;
+    virtual void onStoreInfoResponse(IapResult *, const char* ) PURE;
 
-protected:
-    void dump(IapObject *p);
+    // callback of manageRecurringProductAsync()
+    virtual void onRecurringResponse(IapResult *, PurchaseData *, RecurringState) PURE;
 };
 
 }

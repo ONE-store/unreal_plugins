@@ -14,9 +14,9 @@ UONEstoreIAPGetConnectionState::UONEstoreIAPGetConnectionState(const FObjectInit
 
 EONEstoreConnectionState UONEstoreIAPGetConnectionState::GetConnectionState()
 {	
-#if PLATFORM_ANDROID	
+#if PLATFORM_ANDROID
+	say("d. check in");
 	return (EONEstoreConnectionState)NativeIapHelper->getConnectionState();
-#else
-	return EONEstoreConnectionState::DISCONNECTED;
 #endif
+	return EONEstoreConnectionState::DISCONNECTED;
 }

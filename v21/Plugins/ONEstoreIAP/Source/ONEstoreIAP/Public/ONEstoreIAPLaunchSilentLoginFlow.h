@@ -6,7 +6,7 @@
 #pragma once
 
 #include "ONEstoreIapBase.h"
-#include "ONEstoreIAPIsReady.generated.h"
+#include "ONEstoreIAPLaunchSilentLoginFlow.generated.h"
 
 /* 
 *	Function library class.
@@ -27,10 +27,10 @@
 */
 
 UCLASS(MinimalAPI)
-class UONEstoreIAPIsReady : public UONEstoreIAPSyncBase
+class UONEstoreIAPLaunchSilentLoginFlow : public UONEstoreIAPSyncBase
 {
 	GENERATED_UCLASS_BODY()
 
 	UFUNCTION(BlueprintCallable, Category = "ONEstore|IAP")
-	static bool IsReady();
+	static void LaunchSilentLoginFlow();
 };

@@ -20,10 +20,15 @@ ONEstoreIAPListener	UONEstoreIAPAsyncBase::m_callbackListener;
 
 void UONEstoreIAPShowToast::showToast( FString str )
 {	
+#if 1
 #if PLATFORM_ANDROID
-	NativeIapHelper->showToast(TCHAR_TO_UTF8(*str));
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+	say( "i. showToast( %s )", TCHAR_TO_UTF8( *str ) );
+#endif
+	NativeIapHelper->showToast( TCHAR_TO_UTF8( *str ) );
 #else
-	UE_LOG( LogTemp, Warning, TEXT("[onestore] %s"), TCHAR_TO_UTF8( *str ) );
+	UE_LOG( LogTemp, Warning, TEXT("[onestore] %s" ),	TCHAR_TO_UTF8( *str ) );
+#endif
 #endif
 }
 
@@ -43,8 +48,15 @@ void ONEstoreIAPListener::onSetupFinished(IapResult* presult)
 void ONEstoreIAPListener::onServiceDisconnected()
 {
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
-	UE_LOG(LogTemp, Warning, TEXT("[onestore] %s"), "ONEstore Iap Sevice Disconnected" );
+	say("i. ONEstore Iap Sevice Disconnected. ");
 #endif
+}
+
+
+void ONEstoreIAPListener::onPurchasesResponse(IapResult* presult,
+											  std::list<PurchaseData>* plist) 
+{
+	processPurchaseDataListResult(presult, plist);
 }
 
 
@@ -55,53 +67,49 @@ void ONEstoreIAPListener::onPurchasesUpdated(IapResult* presult,
 }
 
 
-void ONEstoreIAPListener::onQueryPurchasesAsync(IapResult* presult,
-											    std::list<PurchaseData>* plist)
+void ONEstoreIAPListener::onProductDetailsResponse(IapResult* presult,
+												   std::list<ProductDetail>* plist) 
 {
-	processPurchaseDataListResult(presult, plist);
-}
+	TArray<FONEstoreProductDetail> resultList;	
+	for ( ProductDetail& p : *plist) {	
+		resultList.Add( FONEstoreProductDetail( &p ) );
+	}
 
-
-void ONEstoreIAPListener::onQueryProductDetailsAsync(IapResult* presult,
-												     std::list<ProductDetail>* plist) 
-{
-	TArray<FONEstoreProductDetail> resultList;
-	for (auto iter : *plist) 
-		resultList.Add(FONEstoreProductDetail(&iter));
-	
 	m_OnProductDetailListListener.ExecuteIfBound(
 		(int32)presult->getResponseCode(), UTF8_TO_TCHAR(presult->getMessage()),
 		resultList);
 }
 
 
-void ONEstoreIAPListener::onAcknowledgeAsync(IapResult* presult, PurchaseData* pdata) 
+void ONEstoreIAPListener::onAcknowledgeResponse(IapResult* presult,
+												PurchaseData* pdata) 
 {
 	processPurchaseDataResult(presult, pdata);
 }
 
 
-void ONEstoreIAPListener::onConsumeAsync(IapResult* presult, PurchaseData* pdata) 
+void ONEstoreIAPListener::onConsumeResponse(IapResult* presult,
+											PurchaseData* pdata) 
 {
 	processPurchaseDataResult(presult, pdata);
 }
 
 
-void ONEstoreIAPListener::onLaunchLoginFlowAsync(IapResult* presult)
+void ONEstoreIAPListener::onLaunchLoginFlowResponse(IapResult* presult)
 {
 	processIapResult(presult);
 }
 
 
-void ONEstoreIAPListener::onLaunchUpdateOrInstallFlow(IapResult* presult)
-{
+void ONEstoreIAPListener::onLaunchUpdateOrInstallFlowResponse(IapResult* presult)
+{	
 	processIapResult(presult);
 }
 
 
-void ONEstoreIAPListener::onManageRecurringProductAsync(IapResult* presult,
-														PurchaseData* pdata,
-														enum RecurringState state) 
+void ONEstoreIAPListener::onRecurringResponse(IapResult* presult,
+											  PurchaseData* pdata,
+											  enum RecurringState state) 
 {
 	m_OnRecurringStateListener.ExecuteIfBound(
 		(int32)presult->getResponseCode(), UTF8_TO_TCHAR(presult->getMessage()), 
@@ -109,7 +117,7 @@ void ONEstoreIAPListener::onManageRecurringProductAsync(IapResult* presult,
 }
 
 
-void ONEstoreIAPListener::onStoreInfoAsync(IapResult* presult, const char* pinfo)
+void ONEstoreIAPListener::onStoreInfoResponse(IapResult* presult, const char* pinfo)
 {
 	m_OnStoreInfoListener.ExecuteIfBound(
 		(int32)presult->getResponseCode(), UTF8_TO_TCHAR(presult->getMessage()),
@@ -117,24 +125,28 @@ void ONEstoreIAPListener::onStoreInfoAsync(IapResult* presult, const char* pinfo
 }
 
 
-void ONEstoreIAPListener::processIapResult(IapResult* presult) {
+void ONEstoreIAPListener::processIapResult(IapResult* presult) 
+{
 	m_OnIapResultListener.ExecuteIfBound(
 		(int32)presult->getResponseCode(), UTF8_TO_TCHAR(presult->getMessage()));
 }
 
 
 void ONEstoreIAPListener::processPurchaseDataResult(IapResult* presult,
-													PurchaseData* pdata) {
+													PurchaseData* pdata) 
+{
 	m_OnPurchaseDataListener.ExecuteIfBound(
 		(int32)presult->getResponseCode(), UTF8_TO_TCHAR(presult->getMessage()),
 		FONEstorePurchaseData(pdata));
 }
 
 void ONEstoreIAPListener::processPurchaseDataListResult(IapResult* presult,
-														std::list<PurchaseData> *plist) {
+														std::list<PurchaseData> *plist) 
+{
 	TArray<FONEstorePurchaseData> resultList;
-	for (auto iter : *plist)
-		resultList.Add(FONEstorePurchaseData(&iter));
+	for( PurchaseData& p : *plist ){
+		resultList.Add( FONEstorePurchaseData( &p ) );
+	}
 
 	m_OnPurchaseDataListListener.ExecuteIfBound(
 		(int32)presult->getResponseCode(), UTF8_TO_TCHAR(presult->getMessage()),
@@ -159,10 +171,17 @@ UONEstoreIAPSyncBase::UONEstoreIAPSyncBase(const FObjectInitializer& ObjectIniti
 UONEstoreIAPAsyncBase::UONEstoreIAPAsyncBase(const FObjectInitializer& ObjectInitializer)
 : Super(ObjectInitializer)
 {
-#if PLATFORM_ANDROID	
+#if PLATFORM_ANDROID
+	// 최초 1회만 수행하도록 flag 둬서 수정필요
 	if (m_setCallbackListener == false) {
 		m_setCallbackListener = true;
 		ONESTORE_IAP::NativeIapHelper->changeCallbacksListener(getListener());
+
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT	
+		ONESTORE_IAP::NativeIapHelper->setLogLevel(ONESTORE_IAP::LogLevel::VERBOSE);
+#else
+		ONESTORE_IAP::NativeIapHelper->setLogLevel(ONESTORE_IAP::LogLevel::INFO);
+#endif			
 	}	
 #endif
 }

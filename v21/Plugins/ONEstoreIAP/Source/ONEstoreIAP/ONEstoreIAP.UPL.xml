@@ -72,8 +72,8 @@
   
     <gameActivityOnCreateAdditions>
         <insert>
-          com.onestore.sdk.helper.NativeIapHelper.init( this, null );
-        </insert>
+			com.onestore.sdk.helper.NativeIapHelper.init( this, null );
+		</insert>
     </gameActivityOnCreateAdditions>
 
     

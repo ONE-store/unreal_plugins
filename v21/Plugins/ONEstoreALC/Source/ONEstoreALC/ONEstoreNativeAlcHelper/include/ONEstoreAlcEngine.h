@@ -24,6 +24,7 @@ public:
     Engine();
     virtual ~Engine();
 
+    bool            init( JNIEnv* env, jobject activity, CallbacksListener* p = nullptr );
     void            changeCallbacksListener( CallbacksListener* p );
 
     // OneStore ALC API
@@ -35,7 +36,6 @@ public:
 };
 
 extern std::unique_ptr <Engine> NativeAlcHelper;
-
 }
 
 

@@ -16,14 +16,18 @@ UONEstoreIAPAcknowledgeAsync::UONEstoreIAPAcknowledgeAsync(const FObjectInitiali
 UONEstoreIAPAcknowledgeAsync* UONEstoreIAPAcknowledgeAsync::AcknowledgeAsync(
 	const UObject* pWorld, const FONEstorePurchaseData& data)
 {
-	UONEstoreIAPAcknowledgeAsync* pthis = NewObject<UONEstoreIAPAcknowledgeAsync>();
+	UONEstoreIAPAcknowledgeAsync* pthis = 
+		NewObject<UONEstoreIAPAcknowledgeAsync>();
 	pthis->m_pWorld = pWorld;
 	pthis->m_data = data;
 	
-#if PLATFORM_ANDROID
+#if PLATFORM_ANDROID	
+	say( "d. check in" );
+
 #if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
 	pthis->m_data.dump();
 #endif
+
 #endif
 
 	return pthis;
@@ -32,19 +36,27 @@ UONEstoreIAPAcknowledgeAsync* UONEstoreIAPAcknowledgeAsync::AcknowledgeAsync(
 
 void UONEstoreIAPAcknowledgeAsync::Activate()
 {
-#if PLATFORM_ANDROID	
+#if PLATFORM_ANDROID
+	say("d. check in");
 	getListener()->m_OnPurchaseDataListener.BindUObject(
 		this, &UONEstoreIAPAcknowledgeAsync::OnCompleted);
-	NativeIapHelper->acknowledgeAsync(UNREAL_TO_ONESTORE_PURCHASEDATA(m_data).get());
-#endif 
+		
+	PurchaseDataCore core( TCHAR_TO_UTF8(*(m_data.OriginalJson)),
+						   TCHAR_TO_UTF8(*(m_data.Signature)),
+						   TCHAR_TO_UTF8(*(m_data.BillingKey)) );
+	NativeIapHelper->acknowledgeAsync( &core );
+#endif
 }
 
 
-void UONEstoreIAPAcknowledgeAsync::OnCompleted( const int32& code, const FString& message,
-												const FONEstorePurchaseData& data)
+void UONEstoreIAPAcknowledgeAsync::OnCompleted( const int32& code, 
+												const FString& message,
+												const FONEstorePurchaseData& data )
 {
-#if PLATFORM_ANDROID	
-#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT	
+#if PLATFORM_ANDROID
+	say("d. check in");
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+	say("d. result( %d, %s ).", code, TCHAR_TO_UTF8(*message));	
 	data.dump();	
 #endif
 

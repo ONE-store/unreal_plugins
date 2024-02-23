@@ -49,12 +49,13 @@ protected:
 		const UObject* pWorld,
 		const FString& product_id, const EONEstoreProductType type, const FString& developer_payload,
 		const FString& product_name, const FString& game_user_id, const int32 quantity, const bool promotion_applicable );
+
 private:
 	FString			m_product_id;	
 	FString			m_developer_payload;
 	FString			m_product_name;
 	FString			m_game_user_id;
-	int				m_quantity;
+	int32			m_quantity;
 	bool			m_promotion_applicable;
 	EONEstoreProductType m_type;
 

@@ -15,8 +15,13 @@ UONEstoreIAPLaunchLoginFlowAsync::UONEstoreIAPLaunchLoginFlowAsync(const FObject
 
 UONEstoreIAPLaunchLoginFlowAsync* UONEstoreIAPLaunchLoginFlowAsync::LaunchLoginFlowAsync(const UObject* pWorld)
 {
-	UONEstoreIAPLaunchLoginFlowAsync* pthis = NewObject<UONEstoreIAPLaunchLoginFlowAsync>();
+	UONEstoreIAPLaunchLoginFlowAsync* pthis = 
+		NewObject<UONEstoreIAPLaunchLoginFlowAsync>();
 	pthis->m_pWorld = pWorld;
+
+#if PLATFORM_ANDROID
+	say("d. check in");
+#endif
 
 	return pthis;
 }
@@ -25,9 +30,10 @@ UONEstoreIAPLaunchLoginFlowAsync* UONEstoreIAPLaunchLoginFlowAsync::LaunchLoginF
 void UONEstoreIAPLaunchLoginFlowAsync::Activate()
 {
 #if PLATFORM_ANDROID
+	say("d. check in");
 	getListener()->m_OnIapResultListener.BindUObject(
 		this, &UONEstoreIAPLaunchLoginFlowAsync::OnCompleted );	
-
+	
 	NativeIapHelper->launchLoginFlowAsync();
 #endif 
 }
@@ -35,7 +41,12 @@ void UONEstoreIAPLaunchLoginFlowAsync::Activate()
 
 void UONEstoreIAPLaunchLoginFlowAsync::OnCompleted(const int32& code, const FString& message)
 {
-#if PLATFORM_ANDROID	
+#if PLATFORM_ANDROID
+	say("d. check in");
+#if UE_BUILD_DEBUG || UE_BUILD_DEVELOPMENT
+	say("d. result( %d, %s ).", code, TCHAR_TO_UTF8(*message));
+#endif
+
 	switch ((ResponseCode)code) {
 	case ResponseCode::RESULT_OK:
 		OnSuccess.Broadcast(code, message);	break;

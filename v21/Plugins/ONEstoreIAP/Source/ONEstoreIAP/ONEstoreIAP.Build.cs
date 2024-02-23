@@ -34,14 +34,13 @@ public class ONEstoreIAP : ModuleRules
 		
 		PrivateDependencyModuleNames.AddRange(
 			new string[]
-			{                
-                "CoreUObject",
+			{
+				"CoreUObject",
 				"Engine",
 				"Slate",
 				"SlateCore",
-
 				// ... add private dependencies that you statically link with here ...	
-            }
+			}
 			);
 		
 		
@@ -52,22 +51,22 @@ public class ONEstoreIAP : ModuleRules
 			}
 			);
 
-		if (Target.Platform == UnrealTargetPlatform.Android){
-            string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
-            AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "ONEstoreIAP.UPL.xml"));
+		if (Target.Platform == UnrealTargetPlatform.Android)
+		{
+			string PluginPath = Utils.MakePathRelativeTo(ModuleDirectory, Target.RelativeEnginePath);
+			AdditionalPropertiesForReceipt.Add("AndroidPlugin", Path.Combine(PluginPath, "ONEstoreIAP.UPL.xml"));
 
-            string SDKPath = Path.Combine(ModuleDirectory, "ONEstoreNativeIapHelper");
-            string LibraryPath = Path.Combine(SDKPath, "libs");
-            string IncludePath = Path.Combine(SDKPath, "include");
+			string SDKPath = Path.Combine(ModuleDirectory, "ONEstoreNativeIapHelper");
+			string LibraryPath = Path.Combine(SDKPath, "libs");
+			string IncludePath = Path.Combine(SDKPath, "include");
 
-            PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "armeabi-v7a",  "libONEstoreNativeIapHelper.so"));
-            PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "arm64-v8a",    "libONEstoreNativeIapHelper.so"));
-            PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "x86",          "libONEstoreNativeIapHelper.so"));
-            PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "x86_64",       "libONEstoreNativeIapHelper.so"));
+			PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "armeabi-v7a", "libONEstoreNativeIapHelper.so"));
+			PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "arm64-v8a", "libONEstoreNativeIapHelper.so"));
+			PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "x86", "libONEstoreNativeIapHelper.so"));
+			PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "x86_64", "libONEstoreNativeIapHelper.so"));
 
-            PublicIncludePaths.Add(IncludePath);
-
-            PrivateDependencyModuleNames.Add("Launch");
-        }	
+			PublicIncludePaths.Add(IncludePath);
+			PrivateDependencyModuleNames.Add("Launch");
+		}
 	}
 }

@@ -9,84 +9,52 @@
 #include <list>
 #include <string>
 
-#include "ONEstoreIapObject.h"
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+
 namespace ONESTORE_IAP{
 
-    enum class PurchaseState;
-    enum class RecurringState;
+enum class PurchaseState;
+enum class RecurringState;
 
-    class PurchaseData : public IapObject{
-    public:
-        PurchaseData();
-        PurchaseData( jobject obj );
+class PurchaseData{
+public:
+    PurchaseData( jobject obj );
 
-        virtual ~PurchaseData();
+    virtual ~PurchaseData();
 
-        const char*     getOriginalJson();
+    const char*     getOriginalJson();
 
-        const char*     getOrderId();
+    const char*     getOrderId();
 
-        const char*     getPackageName();
+    const char*     getPackageName();
 
-        const char*     getProductId();
+    const char*     getProductId();
 
-        const char*     getDeveloperPayload();
+    const char*     getDeveloperPayload();
 
-        const char*     getPurchaseId();
+    const char*     getPurchaseId();
 
-        const char*     getPurchaseToken();
+    const char*     getPurchaseToken();
 
-        const char*     getBillingKey();
+    const char*     getBillingKey();
 
-        const char*     getSignature();
+    const char*     getSignature();
 
-        bool            isAcknowledged();
+    bool            isAcknowledged();
 
-        int             getQuantity();
+    int32_t         getQuantity();
 
-        int64_t         getPurchaseTime();
+    int64_t         getPurchaseTime();
 
-        PurchaseState   getPurchaseState();
+    PurchaseState   getPurchaseState();
 
-        RecurringState  getRecurringState();
+    RecurringState  getRecurringState();
 
-        virtual void    dump();
-
-        static std::unique_ptr<PurchaseData> getPurchaseData( jobject );
-        static std::unique_ptr<std::list<PurchaseData>> getPurchaseDataList( jobject );
-        static std::unique_ptr<jobject> getPurchaseDataObj( const char*, const char*, const char* );
-        static std::unique_ptr<jobject> getPurchaseDataObj( PurchaseData* pData );
-
-    protected:
-        std::string     OrigJson;
-        std::string     OrderId;
-        std::string     PackageName;
-        std::string     ProductId;
-        std::string     DeveloperPayload;
-        std::string     PurchaseId;
-        std::string     PurchaseToken;
-        std::string     BillingKey;
-        std::string     Signature;
-
-        bool            IsAcknowledged;
-        int             Quantity;
-        int64_t         PurchaseTime;
-        PurchaseState   purchaseState;
-        RecurringState  recurringState;
-
-
-    public:
-        static jclass   purchaseDataClass;
-        static void     NewGlobalRef();
-        static void     clearGlobalRef();
-
-    };
+    virtual void    dump();
+};
 
 }
 

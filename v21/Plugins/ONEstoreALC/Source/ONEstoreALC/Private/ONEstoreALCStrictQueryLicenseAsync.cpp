@@ -8,7 +8,8 @@
 #include "ONEstoreALC.h"
 
 
-UONEstoreALCStrictQueryLicenseAsync::UONEstoreALCStrictQueryLicenseAsync( const FObjectInitializer& ObjectInitializer )
+UONEstoreALCStrictQueryLicenseAsync::UONEstoreALCStrictQueryLicenseAsync( 
+	const FObjectInitializer& ObjectInitializer )
 : Super( ObjectInitializer )
 {
 }
@@ -17,7 +18,8 @@ UONEstoreALCStrictQueryLicenseAsync::UONEstoreALCStrictQueryLicenseAsync( const 
 UONEstoreALCStrictQueryLicenseAsync* UONEstoreALCStrictQueryLicenseAsync::StrictQueryLicenseAsync(
 	const UObject* pWorld, const FString& publicKey )
 {
-	UONEstoreALCStrictQueryLicenseAsync* pthis = NewObject<UONEstoreALCStrictQueryLicenseAsync>();
+	UONEstoreALCStrictQueryLicenseAsync* pthis = 
+		NewObject<UONEstoreALCStrictQueryLicenseAsync>();
 	pthis->m_pWorld = pWorld;
 	pthis->m_publicKey = publicKey;
 	return pthis;
@@ -35,20 +37,20 @@ void UONEstoreALCStrictQueryLicenseAsync::Activate()
 }
 
 
-void UONEstoreALCStrictQueryLicenseAsync::OnCompleted(const int32& code,
-													  const FString& msg,
-													  const FString& license,
-													  const FString& signature)
+void UONEstoreALCStrictQueryLicenseAsync::OnCompleted( const int32& code,
+													   const FString& msg,
+													   const FString& license,
+													   const FString& signature )
 {
-#if PLATFORM_ANDROID
-	switch (code) {
-	case 0:
+#if PLATFORM_ANDROID	
+	switch ((ONESTORE_ALC::ResponseCode)code) {
+	case ONESTORE_ALC::ResponseCode::RESULT_OK:
 		OnGranted.Broadcast(code, msg, license, signature); break;
-	case 9999:
+	case ONESTORE_ALC::ResponseCode::RESULT_DENIED:
 		OnDenied.Broadcast(code, msg, license, signature); break;
-	case 10:
+	case ONESTORE_ALC::ResponseCode::RESULT_NEED_LOGIN:
 		OnNeedLogin.Broadcast(code, msg, license, signature); break;
-	case 11:
+	case ONESTORE_ALC::ResponseCode::RESULT_NEED_UPDATE:
 		OnNeedUpdate.Broadcast(code, msg, license, signature); break;
 	default:
 		OnError.Broadcast(code, msg, license, signature); break;

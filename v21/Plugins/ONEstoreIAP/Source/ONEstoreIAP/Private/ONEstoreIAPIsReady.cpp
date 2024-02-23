@@ -14,9 +14,9 @@ UONEstoreIAPIsReady::UONEstoreIAPIsReady(const FObjectInitializer& ObjectInitial
 
 bool UONEstoreIAPIsReady::IsReady()
 {
-#if PLATFORM_ANDROID	
+#if PLATFORM_ANDROID
+	say("d. check in");
 	return NativeIapHelper->isReady();
-#else
-	return false;
 #endif
+	return false;
 }

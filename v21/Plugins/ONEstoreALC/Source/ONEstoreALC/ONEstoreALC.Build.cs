@@ -66,7 +66,7 @@ public class ONEstoreALC : ModuleRules
             PublicAdditionalLibraries.Add(Path.Combine(LibraryPath, "x86_64", "libONEstoreNativeAlcHelper.so"));
 
             PublicIncludePaths.Add(IncludePath);
-            //PrivateDependencyModuleNames.Add("Launch");
+            PrivateDependencyModuleNames.Add("Launch");
         }
     }
 }

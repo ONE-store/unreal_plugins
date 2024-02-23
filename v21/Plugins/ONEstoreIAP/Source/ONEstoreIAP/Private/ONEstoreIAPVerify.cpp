@@ -12,12 +12,16 @@ UONEstoreIAPVerify::UONEstoreIAPVerify(const FObjectInitializer& ObjectInitializ
 }
 
 
-bool UONEstoreIAPVerify::Verify(const FString publicKey, const FONEstorePurchaseData data )
+bool UONEstoreIAPVerify::Verify( const FString publicKey, const FONEstorePurchaseData data )
 {
-#if PLATFORM_ANDROID	
-	return NativeIapHelper->verifyPurchaseData(
-		TCHAR_TO_UTF8(*publicKey), UNREAL_TO_ONESTORE_PURCHASEDATA(data).get());
-#else
-	return false;
+#if PLATFORM_ANDROID
+	say("d. check in");	
+	 
+	PurchaseDataCore core( TCHAR_TO_UTF8( *(data.OriginalJson)),
+						   TCHAR_TO_UTF8( *(data.Signature)),
+						   TCHAR_TO_UTF8( *(data.BillingKey)) );
+	return NativeIapHelper->verifyPurchaseData( &core, TCHAR_TO_UTF8(*publicKey) );
 #endif
+
+	return false;
 }
